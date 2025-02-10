@@ -32,7 +32,7 @@ const PropertySalePage = () => {
         }
         console.log("Not using",cachedData);
         setLoading(true);
-        const response = await fetch(`/api/properties/list?statusId=2`);
+        const response = await fetch(`/api/properties/list?statusId=2statusProperty=ACCEPTED`);
         if (!response.ok) {
           throw new Error(`Error Response ${response.statusText}`);
         }

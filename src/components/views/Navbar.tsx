@@ -2,54 +2,65 @@
 import Link from "next/link";
 import React, { ReactNode, useRef, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 import MobNav from "./MobNav";
-
 
 interface Props {
   children: ReactNode;
 }
 
 const Navbar = ({ children }: Props) => {
-
+  const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const closeTimeout = useRef<NodeJS.Timeout | null>(null);  // Used to manage timeout
+  const closeTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const navLinks = [
+    { href: "/", label: "HOME" },
+    { href: "/properties/buy", label: "BUY" },
+    { href: "/properties/rent", label: "RENT" },
+    { href: "/user/properties", label: "SELL" },
+    { href: "/pricing", label: "PRICING" },
+    { href: "/about", label: "ABOUT US" },
+    { href: "/FAQs", label: "FAQS" },
+  ];
+
+  const isActive = (href: string) => pathname === href;
 
   const handleMouseEnter = () => {
-    // When mouse enters, we open the dropdown
     if (closeTimeout.current) {
-      clearTimeout(closeTimeout.current); // Clear any previous timeout
+      clearTimeout(closeTimeout.current);
     }
-    setIsDropdownOpen(true); // Open the dropdown
+    setIsDropdownOpen(true);
   };
 
   const handleMouseLeave = () => {
-    // Add a small delay before closing the dropdown
     closeTimeout.current = setTimeout(() => {
-      setIsDropdownOpen(false); // Close the dropdown
-    }, 200);  // 200ms delay for smooth transition
+      setIsDropdownOpen(false);
+    }, 200);
   };
 
   return (
     <div className="navbar bg-background lg:px-10 px-4 ">
       {/* Navbar for Small Screens */}
       <div className="flex w-full lg:hidden items-center justify-between">
-        {/* Menu Icon on the Left */}
-        <MobNav/>
-
-        {/* Logo in the Center */}
+        <MobNav />
         <div className="flex justify-center ">
           <Link href="/">
-            <Image className="lg:w-28 md:w-28 sm:w-20" src="/logo.png" width={150} height={150} alt="zyck" />
+            <Image
+              className="lg:w-28 md:w-28 sm:w-20"
+              src="/logo.png"
+              width={150}
+              height={150}
+              alt="zyck"
+            />
           </Link>
         </div>
-
-        {/* Sign-in Button on the Right */}
         <div>{children}</div>
       </div>
 
       {/* Navbar for Large Screens */}
-      <div className="hidden lg:flex w-full  justify-around">
+      <div className="hidden lg:flex w-full justify-around">
         {/* Navbar Start */}
         <div className="navbar-start">
           <Link href="/">
@@ -60,9 +71,17 @@ const Navbar = ({ children }: Props) => {
         {/* Navbar Center */}
         <div className="navbar-center">
           <ul className="menu menu-horizontal px-1">
-            <li>
-              <Link className="text-primary" href="/">HOME</Link>
-            </li>
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className={isActive(link.href) ? "text-green-500" : ""}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+
             {/* Dropdown for Pages */}
             <li
               className="relative z-[10000]"
@@ -117,33 +136,12 @@ const Navbar = ({ children }: Props) => {
                 </ul>
               )}
             </li>
-
-            {/* <li>
-              <Link href="/properties/buy">BUY</Link>
-            </li>
-            <li>
-              <Link href="/properties/rent">RENT</Link>
-            </li>
-            <li>
-              <Link href="/user/properties">SELL</Link>
-            </li> */}
-            <li>
-              <Link href="/pricing">PRICING</Link>
-            </li>
-            <li>
-              <Link href="/about">ABOUT US</Link>
-            </li>
-            <li>
-              <Link href="/FAQs">FAQS</Link>
-            </li>
-            
           </ul>
         </div>
 
         {/* Navbar End */}
         <div className="flex navbar-end justify-end">{children}</div>
       </div>
-       
     </div>
   );
 };
