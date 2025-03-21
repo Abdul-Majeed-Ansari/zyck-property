@@ -1,6 +1,6 @@
 "use server";
 
-import { AddPropertyInputType } from "@/app/user/properties/add/_components/AddPropertyForm";
+import { AddPropertyFormReplicaSchema } from "@/app/user/properties/add/_components/AddPropertyForm";
 import {prisma} from "../prisma";
 import { error } from "console";
 
@@ -30,7 +30,7 @@ interface Property {
 }
 
 export async function saveProperty(
-  propertyData: AddPropertyInputType,
+  propertyData: AddPropertyFormReplicaSchema,
   imagesUrls: string[],
   user:user | null
 ) {
@@ -87,7 +87,7 @@ export async function saveProperty(
 
 export async function editProperty(
   propertyId: number,
-  propertyData: AddPropertyInputType,
+  propertyData: AddPropertyFormReplicaSchema,
   newImagesUrls: string[],
   deletedImageIDs: number[]
 ) {

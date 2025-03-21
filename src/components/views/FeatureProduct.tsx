@@ -4,8 +4,7 @@ import { Property } from '@/lib/type';
 import PropertyCardsecond from '@/components/views/secondPropertyCard';
 import { SkeletonPropertyCard } from '../custom/skeleton/SkeletonPropertyCard';
 import { useEffect, useState } from 'react';
-import { getLocalStorageWithTTL, setLocalStorageWithTTL } from '@/lib/localStorage';
-import { propertiesDataLocalStorage } from '@/lib/constant';
+// import { propertiesDataLocalStorage } from '@/lib/constant';
 
 const FeatureProduct =  () => {
 
@@ -14,13 +13,12 @@ const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const storedProperties = getLocalStorageWithTTL(propertiesDataLocalStorage);
-    if (storedProperties) {
-      setProperties(storedProperties);
-      setLoading(false);
-    } else {
+    // const storedProperties = getLocalStorageWithTTL(propertiesDataLocalStorage);
+    // if (storedProperties) {
+    //   setProperties(storedProperties);
+    //   setLoading(false);
+    // } else {
       fetchData();
-    }
   }, []);
 
   const fetchData = async () => {
@@ -31,7 +29,7 @@ const [properties, setProperties] = useState<Property[]>([]);
       }
       const result = await response.json();
       setProperties(result);
-      setLocalStorageWithTTL(propertiesDataLocalStorage, result, 1000 * 60 * 1); // Store for 3 minutes
+      console.log("result", result)
     } catch (error) {
       console.error("Error fetching properties:", error);
     } finally {

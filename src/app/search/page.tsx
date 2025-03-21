@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider"
 import type { Property } from "@/lib/type"
 import Loader from "@/components/ui/loader"
 import PropertyCardsecond from "@/components/views/secondPropertyCard"
+import { X } from "lucide-react"
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState<string>("")
@@ -15,11 +16,12 @@ export default function Search() {
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
-  // New state for additional filters
+  // State for additional filters
   const [propertyStatus, setPropertyStatus] = useState<string>("all")
   const [bedrooms, setBedrooms] = useState<number>(0)
   const [bathrooms, setBathrooms] = useState<number>(0)
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000])
+  const [maxPrice, setMaxPrice] = useState<number>(1000000)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,6 +32,13 @@ export default function Search() {
         }
         const data = await response.json()
         setProperties(data)
+
+        // Find the highest price to set as max for the slider
+        if (data.length > 0) {
+          const highestPrice = Math.max(...data.map((p : any) => Number(p.price)))
+          setMaxPrice(highestPrice > 0 ? highestPrice : 1000000)
+          setPriceRange([0, highestPrice > 0 ? highestPrice : 1000000])
+        }
       } catch (error) {
         console.error(error)
       } finally {
@@ -40,6 +49,7 @@ export default function Search() {
   }, [])
 
   const handleSearch = () => {
+    // This function could be used to trigger API-based filtering if needed
     console.log("Search term:", searchTerm)
     console.log("Sort by:", sortOption)
     console.log("Property Status:", propertyStatus)
@@ -48,26 +58,43 @@ export default function Search() {
     console.log("Price Range:", priceRange)
   }
 
-  
+  const resetFilters = () => {
+    setSearchTerm("")
+    setSortOption("priceLowToHigh")
+    setPropertyStatus("all")
+    setBedrooms(0)
+    setBathrooms(0)
+    setPriceRange([0, maxPrice])
+  }
 
   const filteredProperties = properties
     .filter((property) => {
+      // Text search filter (name or city)
       const nameMatch = property.name.toLowerCase().includes(searchTerm.toLowerCase())
       const cityMatch = property.location.city.value.toLowerCase().includes(searchTerm.toLowerCase())
+      const textMatch = nameMatch || cityMatch
+
+      // Property status filter
       const statusMatch =
         propertyStatus === "all" || property.status.value.toLowerCase() === propertyStatus.toLowerCase()
+
+      // Bedrooms and bathrooms filters
       const bedroomsMatch = bedrooms === 0 || property.feature.bedrooms >= bedrooms
       const bathroomsMatch = bathrooms === 0 || property.feature.bathrooms >= bathrooms
-      const priceMatch =Number(property.price) >= priceRange[0] && Number(property.price)  <= priceRange[1]
 
-      return nameMatch || (cityMatch && statusMatch && bedroomsMatch && bathroomsMatch && priceMatch)
+      // Price range filter
+      const propertyPrice = Number(property.price)
+      const priceMatch = propertyPrice >= priceRange[0] && propertyPrice <= priceRange[1]
+
+      // All filters must match
+      return textMatch && statusMatch && bedroomsMatch && bathroomsMatch && priceMatch
     })
     .sort((a, b) => {
       if (sortOption === "priceLowToHigh") {
-        return Number.parseInt(a.price) - Number.parseInt(b.price)
+        return Number(a.price) - Number(b.price)
       }
       if (sortOption === "priceHighToLow") {
-        return Number.parseInt(b.price) - Number.parseInt(a.price)
+        return Number(b.price) - Number(a.price)
       }
       return 0
     })
@@ -75,7 +102,19 @@ export default function Search() {
   return (
     <div className="flex flex-col md:flex-row">
       {/* Sidebar */}
-      <div className="md:w-1/4 w-full p-3 space-y-4">
+      <div className="md:w-1/4 w-full p-3 space-y-4 rounded-lg">
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">Filters</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={resetFilters}
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-3 w-3 mr-1" /> Reset
+          </Button>
+        </div>
+
         <Input
           placeholder="Search by name or city..."
           value={searchTerm}
@@ -106,7 +145,7 @@ export default function Search() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">Bedrooms</label>
-          <Select value={bedrooms.toString()} onValueChange={(value) => setBedrooms(Number.parseInt(value))}>
+          <Select value={bedrooms.toString()} onValueChange={(value) => setBedrooms(Number(value))}>
             <SelectTrigger className="w-full p-2 border border-gray-300 rounded">
               <SelectValue placeholder="Bedrooms" />
             </SelectTrigger>
@@ -122,7 +161,7 @@ export default function Search() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">Bathrooms</label>
-          <Select value={bathrooms.toString()} onValueChange={(value) => setBathrooms(Number.parseInt(value))}>
+          <Select value={bathrooms.toString()} onValueChange={(value) => setBathrooms(Number(value))}>
             <SelectTrigger className="w-full p-2 border border-gray-300 rounded">
               <SelectValue placeholder="Bathrooms" />
             </SelectTrigger>
@@ -136,29 +175,34 @@ export default function Search() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Price Range</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
           <Slider
             min={0}
-            max={1000000}
-            step={10000}
+            max={maxPrice}
+            step={1000}
             value={priceRange}
-            onValueChange={()=>setPriceRange}
+            onValueChange={(value) => setPriceRange(value as [number, number])}
             className="mt-2"
           />
-          <div className="flex justify-between mt-2">
+          <div className="flex justify-between mt-2 text-sm">
             <span>${priceRange[0].toLocaleString()}</span>
             <span>${priceRange[1].toLocaleString()}</span>
           </div>
         </div>
 
         <Button onClick={handleSearch} className="w-full text-white p-2 rounded">
-          Search
+          Apply Filters
         </Button>
       </div>
 
       {/* Property Listings */}
       <div className="md:w-3/4 w-full p-6 border-l-2">
-        <h1 className="text-2xl md:px-10 text-primary py-4">Listing Results</h1>
+        <div className="flex justify-between items-center md:px-10 py-4">
+          <h1 className="text-2xl text-primary">Listing Results</h1>
+          <p className="text-sm text-muted-foreground">
+            {filteredProperties.length} {filteredProperties.length === 1 ? "property" : "properties"} found
+          </p>
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
@@ -181,7 +225,13 @@ export default function Search() {
                 />
               ))
             ) : (
-              <p className="col-span-full text-center">No results found.</p>
+              <div className="col-span-full flex flex-col items-center justify-center h-64 text-center">
+                <p className="text-lg font-medium">No properties match your filters</p>
+                <p className="text-muted-foreground">Try adjusting your search criteria</p>
+                <Button variant="outline" onClick={resetFilters} className="mt-4">
+                  Reset Filters
+                </Button>
+              </div>
             )}
           </div>
         )}

@@ -1,13 +1,11 @@
+"use client"
 import React from "react";
 import PictureCard from "./PictureCard";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid";
 import { PropertyImage } from "@prisma/client";
 import FileInput from "@/components/ui/FileInput";
 import { toast } from "react-toastify";
 
 interface Props {
-  next: () => void;
-  prev: () => void;
   className?: string;
   images: File[];
   setImages: (images: File[]) => void;
@@ -49,6 +47,8 @@ const Picture = (props: Props) => {
     ]);
   };
 
+    console.log(props, "props");
+
   return (
     <div className={`p-3 ${props.className}`}>
       {/* Show file input only if total images is less than 5 */}
@@ -66,7 +66,6 @@ const Picture = (props: Props) => {
       <div className="flex gap-3 flex-wrap">
         {/* Render saved images */}
         {props.savedImagesUrl &&
-          props.setSavedImageUrl &&
           props.savedImagesUrl.map((image, index) => {
             return (
               <PictureCard
@@ -93,7 +92,7 @@ const Picture = (props: Props) => {
       </div>
 
       {/* Navigation buttons */}
-      <div className="flex justify-center col-span-2 gap-3 mt-3">
+      {/* <div className="flex justify-center col-span-2 gap-3 mt-3">
         <button
           onClick={props.prev}
           className="bg-blue-500 text-white p-2 rounded-md w-36 flex items-center justify-center gap-2"
@@ -106,9 +105,9 @@ const Picture = (props: Props) => {
           className="bg-blue-500 text-white p-2 rounded-md w-36 flex items-center justify-center gap-2"
         >
           <ChevronRightIcon className="w-6" /> Next
-        </button>
+        </button> */}
       </div>
-    </div>
+    // </div>
   );
 };
 

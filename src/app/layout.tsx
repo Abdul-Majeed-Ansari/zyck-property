@@ -1,5 +1,6 @@
+import Head from "next/head"; // Import Head from Next.js
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Lato } from "next/font/google"; // ✅ Import Lato properly
+import { Geist, Geist_Mono, Lato } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/views/Footer";
 import Navbar from "@/components/views/Navbar";
@@ -20,7 +21,7 @@ const geistMono = Geist_Mono({
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
-  weight: ["100", "300", "400", "700", "900"], // Include weights you need
+  weight: ["100", "300", "400", "700", "900"],
 });
 
 export const metadata: Metadata = {
@@ -36,6 +37,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta
+          name="google-site-verification"
+          content="fUUT_q5k9eBGJXvznM_iFkUgauXOgnL9jhrY5iwkWUs"
+        />
+        {/* Google Analytics Script */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-L565MF8SKB"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-L565MF8SKB');
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} antialiased`}
       >

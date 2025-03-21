@@ -3,14 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { userExited, userNotExited, UserType } from "@/redux/reducer/authSlice";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import UserProfilePanel from "./UserProfilePanel";
-import { prisma } from "@/lib/prisma";
 import { Button } from "./button";
 import Link from "next/link";
 import { getUserFromDB } from "@/lib/actions/user/getUser";
 import { RootState } from "@/redux/store";
-import { toast } from "react-toastify";
 
 const SignInPanel = () => {
     const dispatch = useDispatch();

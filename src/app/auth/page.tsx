@@ -12,16 +12,12 @@ const AuthPage: React.FC = () => {
     const { user,loader } = useSelector((state: RootState) => state.auth);
     const router = useRouter();
 
-
     useEffect(() => {
         if (user) {
             // If user is logged in, redirect to homepage
             router.push('/');
         } 
     }, [user, router]);
-
-
-
 
     return (
         <div

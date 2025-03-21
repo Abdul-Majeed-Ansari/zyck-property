@@ -2,62 +2,59 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import Loader from "@/components/ui/loader"
 import { Bed, Bath, Car, Ruler, Mail, Phone, X, Heart, Share2, CheckCircle, MapPin, User } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import React from "react"
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
-import { log } from "console"
-import { AreaType } from "@prisma/client"
+import type { AreaType } from "@prisma/client"
 import { unitAbbreviations } from "@/lib/constant"
 import SkeletonOpenProperty from "@/components/custom/skeleton/skeletonOpenPorperty"
 interface Contact {
-  email: string;
-  name: string;
-  phone: string;
+  email: string
+  name: string
+  phone: string
 }
 
 interface Features {
-  area: number;
-  bathrooms: number;
-  bedrooms: number;
-  hasBalcony: boolean;
-  hasGarage: boolean;
-  hasGarden: boolean;
-  hasPool: boolean;
-  hasGardenYard: boolean;
-  hasSwimmingPool: boolean;
-  parkingSpots: number;
-  propertyId: number;
-  areaType:AreaType
+  area: number
+  bathrooms: number
+  bedrooms: number
+  hasBalcony: boolean
+  hasGarage: boolean
+  hasGarden: boolean
+  hasPool: boolean
+  hasGardenYard: boolean
+  hasSwimmingPool: boolean
+  parkingSpots: number
+  propertyId: number
+  areaType: AreaType
 }
 
 interface Images {
-  id: number;
-  url: string;
-  propertyId: number;
+  id: number
+  url: string
+  propertyId: number
 }
 
 interface Location {
   city: string
-  stateId: number;
+  stateId: number
 }
 
 export interface Property {
-  price: string;
-  description: string;
-  name: string;
-  feature: Features;
+  price: string
+  description: string
+  name: string
+  feature: Features
   status: {
-    value: string;
-  };
+    value: string
+  }
   type: {
-    value: string;
-  };
-  images: Images[];
-  location: Location;
-  contact: Contact;
+    value: string
+  }
+  images: Images[]
+  location: Location
+  contact: Contact
 }
 
 async function fetchProperty(id: string): Promise<Property> {
@@ -68,8 +65,6 @@ async function fetchProperty(id: string): Promise<Property> {
   }
   return response.json()
 }
-
-
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -82,7 +77,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     const formatted = phone.replace(/^0/, "+92")
     return formatted.replace(/(\+92)(\d{3})(\d{4})(\d{3})/, "$1 $2 $3 $4")
   }
-console.log(property?.location.city,"city");
+  console.log(property?.location.city, "city")
 
   function formatPrice(price: number): string {
     return new Intl.NumberFormat("en-PK", {
@@ -112,7 +107,7 @@ console.log(property?.location.city,"city");
   if (!property) {
     return (
       <div className="">
-      <SkeletonOpenProperty />
+        <SkeletonOpenProperty />
       </div>
     )
   }
@@ -174,9 +169,7 @@ console.log(property?.location.city,"city");
                   <h1 className="text-2xl font-bold text-white mb-2">{property.name}</h1>
                   <div className="flex items-center text-gray-400">
                     <MapPin className="w-4 h-4 mr-1" />
-                    <span>
-                      {property.location.city}, pakistan
-                    </span>
+                    <span>{property.location.city}, pakistan</span>
                   </div>
                 </div>
                 <div className="text-right">
@@ -204,7 +197,10 @@ console.log(property?.location.city,"city");
                   <Ruler className="w-5 h-5 text-emerald-500" />
                   <div>
                     <p className="text-sm text-gray-400">Area</p>
-                    <p className="font-semibold text-white">{property.feature.area} {unitAbbreviations[property.feature.areaType] || property.feature.areaType}</p>
+                    <p className="font-semibold text-white">
+                      {property.feature.area}{" "}
+                      {unitAbbreviations[property.feature.areaType] || property.feature.areaType}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -241,7 +237,7 @@ console.log(property?.location.city,"city");
               {/* Description */}
               <div className="py-6 border-t border-gray-700">
                 <h2 className="text-lg font-semibold mb-4 text-white">Description</h2>
-                <p className="text-gray-300 leading-relaxed">{property.description}</p>
+                <p className="text-gray-300 leading-relaxed whitespace-pre-line">{property.description}</p>
               </div>
             </div>
           </div>
@@ -251,7 +247,7 @@ console.log(property?.location.city,"city");
             <div className="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700 sticky top-6">
               <div className="flex items-center  gap-4 mb-6">
                 <div className="flex items-center justify-center w-16 h-16 rounded-full overflow-hidden border-2 border-emerald-500">
-                <User />
+                  <User />
                 </div>
                 <div>
                   <h3 className="font-semibold text-white">{property.contact.name}</h3>
@@ -265,7 +261,7 @@ console.log(property?.location.city,"city");
                   onClick={() => setIsModalOpen(true)}
                 >
                   <Phone className="w-4 h-4 mr-2" />
-                  Contact 
+                  Contact
                 </Button>
                 <Button variant="outline" className="w-full border-gray-600 text-gray-300 hover:bg-gray-700">
                   <Mail className="w-4 h-4 mr-2" />

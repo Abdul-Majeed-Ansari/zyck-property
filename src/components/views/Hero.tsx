@@ -6,7 +6,7 @@ import { Searchbar } from './Searchbar'
 
 
 const Hero = () => {
-
+console.log("Hero Page");
   return (
     <>
       <div

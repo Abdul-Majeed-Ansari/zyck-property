@@ -6,12 +6,13 @@ import FeatureProduct from "@/components/views/FeatureProduct";
 import Hero from "@/components/views/Hero";
 
 export default function Home() {
+
+  console.log("Home Page");
   return (
     <>
     <Hero/>
     <FeatureProduct/>
     <Heroend/>
-    
     <Cities/>
     <ChooseUs/>
     {/* <PartnersSection/> */}
